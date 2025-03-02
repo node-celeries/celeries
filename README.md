@@ -1,28 +1,30 @@
 # Status
 
-[![NPM](https://img.shields.io/npm/v/celery-ts.svg)](https://www.npmjs.com/package/celery-ts)
-[![Maintainability](https://api.codeclimate.com/v1/badges/841b29c65d87bcdcdc85/maintainability)](https://codeclimate.com/github/node-celery-ts/node-celery-ts/maintainability)[![Test Coverage](https://api.codeclimate.com/v1/badges/841b29c65d87bcdcdc85/test_coverage)](https://codeclimate.com/github/node-celery-ts/node-celery-ts/test_coverage)
+[![NPM](https://img.shields.io/npm/v/celeries.svg)](https://www.npmjs.com/package/celeries)
+[![NPM Downloads](https://img.shields.io/npm/dw/celeries)](https://www.npmjs.com/package/celeries)
+[![GitHub Activity](https://img.shields.io/github/commit-activity/w/node-celeries/celeries)](https://www.github.com/node-celeries/celeries)
+
 
 # Description
 
-`node-celery-ts` is a Celery client for Node.js written in TypeScript.
-`node-celery-ts` supports RabbitMQ and Redis result brokers and RPC (over
-RabbitMQ) and Redis result backends. `node-celery-ts` provides
+`celeries` is a Celery client for Node.js written in TypeScript.
+`celeries` supports RabbitMQ and Redis result brokers and RPC (over
+RabbitMQ) and Redis result backends. `celeries` provides
 higher performance than Celery on PyPy and provides greater feature support than
 [`node-celery`](https://github.com/mher/node-celery), including Redis Sentinel
 and Cluster, RPC result backends, YAML serialization, zlib task compression, and
-Promise-based interfaces. `node-celery-ts` uses
+Promise-based interfaces. `celeries` uses
 [`amqplib`](https://github.com/squaremo/amqp.node) and
 [`ioredis`](https://github.com/luin/ioredis) for RabbitMQ and Redis,
-respectively. `node-celery-ts` does not support Amazon SQS or Zookeeper message
+respectively. `celeries` does not support Amazon SQS or Zookeeper message
 brokers, nor does it support SQLAlchemy, Memcached, Cassandra, Elasticsearch,
 IronCache, Couchbase, CouchDB, filesystem, or Consul result backends.
 
 
 # Usage
 ## Basic
-```typescript
-import * as Celery from "celery-ts";
+```ts
+import * as Celery from "celeries";
 
 const client: Celery.Client = Celery.createClient({
 	brokerUrl: "amqp://localhost",
@@ -42,8 +44,8 @@ promise.then(console.log)
 ```
 
 ## Advanced
-```typescript
-import * as Celery from "celery-ts";
+```ts
+import * as Celery from "celeries";
 
 const id = "7a5b72ab-03d1-47d9-8a9d-54af7c26bd59";
 const brokers: Array<Celery.MessageBroker> = [
@@ -59,7 +61,7 @@ const client: Celery.Client = new Celery.Client({
 ```
 
 ## Message Broker Failover
-```typescript
+```ts
 const id = "7a5b72ab-03d1-47d9-8a9d-54af7c26bd59";
 const brokers: Array<Celery.MessageBroker> = [
 	Celery.createBroker("amqp://localhost"),
@@ -83,7 +85,7 @@ const client: Celery.Client = new Celery.Client({
 
 ## Task Options
 
-```typescript
+```ts
 const client: Celery.Client = Celery.createClient({
 	brokerUrl: "amqp://localhost",
 	resultBackend: "redis://localhost",
@@ -108,7 +110,7 @@ promise.then(console.log)
 ## RabbitMQ
 ### `AmqpBroker`
 
-```typescript
+```ts
 const options: Celery.AmqpOptions = {
 	hostname: "localhost",
 	protocol: "amqp",
@@ -118,7 +120,7 @@ const broker = new Celery.AmqpBroker(options);
 
 ### `RpcBackend`
 
-```typescript
+```ts
 const id = "7a5b72ab-03d1-47d9-8a9d-54af7c26bd59";
 const options: Celery.AmqpOptions = {
 	hostname: "localhost",
@@ -133,7 +135,7 @@ const backend = new Celery.RpcBackend(id, options);
 an interface that can be extended by the user to allow new creational patterns.
 
 ### TCP
-```typescript
+```ts
 const tcp: RedisOptions = new Celery.RedisTcpOptions({
 	host: "localhost",
 	protocol: "redis",
@@ -141,7 +143,7 @@ const tcp: RedisOptions = new Celery.RedisTcpOptions({
 ```
 
 ### Unix Socket
-```typescript
+```ts
 const socket: RedisOptions = new Celery.RedisSocketOptions({
 	path: "/tmp/redis.sock",
 	protocol: "redis+socket",
@@ -152,7 +154,7 @@ If you so desire, you may also provide options directly to `ioredis` when using
 a TCP or Unix Socket connection. See `BasicRedisOptions` for the full list.
 
 ### Sentinel
-```typescript
+```ts
 const sentinel: RedisOptions = new Celery.RedisSentinelOptions({
 	sentinels: [
 		{ host: "localhost", port: 26379 },
@@ -163,7 +165,7 @@ const sentinel: RedisOptions = new Celery.RedisSentinelOptions({
 ```
 
 ### Cluster
-```typescript
+```ts
 const cluster: RedisOptions = new Celery.RedisClusterOptions({
 	nodes: [
 		{ host: "localhost", port: 6379 },
@@ -174,10 +176,12 @@ const cluster: RedisOptions = new Celery.RedisClusterOptions({
 
 # Thanks
 
-`node-celery-ts` was inspired by
-[`node-celery`](https://github.com/mher/node-celery). Special thanks to
-[Cameron Will](https://github.com/cwill747) for his guidance.
+`celeries` was forked from
+[`node-celery-ts`](https://github.com/node-celery-ts/node-celery-ts)
+
+Which is inspired by
+[`node-celery`](https://github.com/mher/node-celery).
 
 # License
 
-`node-celery-ts` is licensed under the BSD-3-Clause license.
+`celeries` is licensed under the BSD-3-Clause license.
