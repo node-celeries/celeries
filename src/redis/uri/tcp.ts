@@ -165,8 +165,8 @@ const parseDb = (maybeDb: string): number => {
 
   const maybeMatches = /^\/0*(\d+)/.exec(maybeDb);
 
-  if (isNullOrUndefined(maybeMatches)) {
-    throw new ParseError(`unable to parse "${maybeDb}" as db path`);
+  if (!maybeMatches) {
+    throw new ParseError(`unable to parse "${maybeDb}" as database path`);
   }
 
   const matches: RegExpExecArray = maybeMatches;

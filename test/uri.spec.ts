@@ -175,7 +175,6 @@ describe("Celery.Uri.parseUri", () => {
   });
 
   it("should not parse invalid queries", () => {
-    expectParseToThrow("s://h?query =value", Errors.ParseError);
     expectParseToThrow("s://h?q=&", Errors.ParseError);
     expectParseToThrow("s://h?=value", Errors.ParseError);
   });

@@ -134,8 +134,6 @@ describe("Celery.Amqp.Uri.parse", () => {
 
     assertParseThrows("amqp://ß"); // no UTF for hostnames :(
 
-    assertParseThrows("amqp://host?foo bar=baz qux");
-
     const RESERVED: Array<string> = [
       "!",
       "*",

@@ -107,16 +107,22 @@ export const parseUri = (toParse: string): Uri => {
 
   if (!parsed) throw new ParseError(`Celery.Uri.parse: string '${toParse}' is not parsable`);
 
+  const scheme = parsed.protocol.substring(0, parsed.protocol.length - 1).toLowerCase();
+
   const withRequired: Uri = {
-    path: parsed.pathname,
+    path: parsed.href === parsed.protocol ? parsed.pathname : parsed.pathname || '/',
     raw: toParse,
-    scheme: parsed.protocol.toLowerCase(),
+    scheme
   };
   const withAuthority = addHostUserPassAndPort(parsed, withRequired);
   const withQuery = addQuery(parsed, withAuthority);
 
   return withQuery;
 };
+
+function isFalsy(value: string | null | undefined): boolean {
+  return !value
+}
 
 /**
  * Only looks at the beginning of the string to match a scheme.
@@ -152,7 +158,7 @@ export function getScheme(rawUri: string): Scheme {
  *          defined.
  */
 function addHost(uri: URL, parsing: Uri): Uri {
-  if (isNullOrUndefined(uri.hostname)) {
+  if (isFalsy(uri.hostname)) {
     return parsing;
   }
 
@@ -174,7 +180,7 @@ function addHostAndUser(uri: URL, parsing: Uri): Uri {
 
   if (
     isNullOrUndefined(withHost.authority) ||
-    isNullOrUndefined(uri.username)
+    isFalsy(uri.username)
   ) {
     return withHost;
   }
@@ -184,7 +190,7 @@ function addHostAndUser(uri: URL, parsing: Uri): Uri {
     authority: {
       ...withHost.authority,
       userInfo: {
-        user: uri.username,
+        user: decodeURIComponent(uri.username),
       },
     },
   };
@@ -204,14 +210,14 @@ function addHostUserAndPass(uri: URL, parsing: Uri): Uri {
 
   if (
     isNullOrUndefined(withUser.authority.userInfo) &&
-    !isNullOrUndefined(uri.password)
+    !isFalsy(uri.password)
   ) {
     return {
       ...withUser,
       authority: {
         ...withUser.authority,
         userInfo: {
-          pass: uri.password,
+          pass: decodeURIComponent(uri.password),
           user: "",
         },
       },
@@ -220,7 +226,7 @@ function addHostUserAndPass(uri: URL, parsing: Uri): Uri {
 
   if (
     isNullOrUndefined(withUser.authority.userInfo) ||
-    isNullOrUndefined(uri.password)
+    isFalsy(uri.password)
   ) {
     return withUser;
   }
@@ -245,7 +251,7 @@ function addHostUserAndPass(uri: URL, parsing: Uri): Uri {
 function addHostUserPassAndPort(uri: URL, parsing: Uri): Uri {
   const withPass = addHostUserAndPass(uri, parsing);
 
-  if (isNullOrUndefined(withPass.authority) || isNullOrUndefined(uri.port)) {
+  if (isNullOrUndefined(withPass.authority) || isFalsy(uri.port)) {
     return withPass;
   }
 
@@ -258,6 +264,19 @@ function addHostUserPassAndPort(uri: URL, parsing: Uri): Uri {
   };
 };
 
+function parseQueries(entries: Iterable<[string, string]>) {
+  const result = <any>{};
+  for (const [key, value] of entries) {
+    if (Object.hasOwnProperty.call(result, key)) {
+      if (Array.isArray(result[key]))
+        result[key].push(value);
+      else
+        result[key] = [result[key], value];
+    } else result[key] = value;
+  }
+  return result;
+}
+
 /**
  * @param uri `URL`.
  * @param parsing The object to append queries to.
@@ -267,7 +286,7 @@ export function addQuery(uri: URL, parsing: Uri): Uri {
   const REGEX: RegExp = // tslint:disable:max-line-length
     /^[A-Za-z\d*-._+%]+=[A-Za-z\d*-._+%]*(?:&[A-Za-z\d*-._+%]+=[A-Za-z\d*-._+%+]*)*$/;
 
-  if (isNullOrUndefined(uri.search)) {
+  if (isFalsy(uri.search)) {
     return parsing;
   }
 
@@ -275,7 +294,7 @@ export function addQuery(uri: URL, parsing: Uri): Uri {
     throw new ParseError(`query "${uri.search}" is not a valid HTML query`);
   }
 
-  const unconverted = Object.fromEntries(uri.searchParams.entries()) as Queries;
+  const unconverted = parseQueries(uri.searchParams.entries()) as Queries;
 
   const camelCaseQuery = (queries: Queries, key: string) => {
     const cased = toCamelCase(key);
@@ -309,15 +328,13 @@ export function addQuery(uri: URL, parsing: Uri): Uri {
  * @throws ParseError If `maybePort` is not a number.
  */
 export function parsePort(maybePort: string): number {
-  const maybeMatches = /^\d+$/.exec(maybePort);
+  const parsed = +maybePort;
 
-  if (isNullOrUndefined(maybeMatches)) {
+  if (Number.isNaN(parsed)) {
     throw new ParseError(`could not parse "${maybePort}" as port`);
   }
 
-  const parsed = Number.parseInt(maybePort, 10);
-
-  return parsed;
+  return Number.parseInt(maybePort);
 };
 
 /**

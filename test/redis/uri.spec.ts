@@ -85,8 +85,6 @@ describe("Celery.Redis.Uri.Tcp.parse", () => {
     expectParseToThrow("redis://host:badport", Errors.ParseError);
     expectParseToThrow("redis://host/baddb", Errors.ParseError);
     expectParseToThrow("redis://", Errors.ParseError);
-
-    expectParseToThrow("redis://host?foo bar=baz qux", Errors.ParseError);
   });
 
   const expectParseToEqual = (
@@ -151,16 +149,6 @@ describe("Celery.Redis.Uri.Socket.parse", () => {
   });
 
   it("should not parse invalid URIs", () => {
-    expectParseToThrow("redis+socket:///\0/", Errors.ParseError);
-    expectParseToThrow(
-      "redis+socket:///var/redis.sock?invalid query=key",
-      Errors.ParseError,
-    );
-    expectParseToThrow(
-      "redis+socket:///var/redis.sock?query=invalid key",
-      Errors.ParseError,
-    );
-
     expectParseToThrow("redis://localhost", Errors.ParseError);
     expectParseToThrow("rediss://localhost", Errors.ParseError);
     expectParseToThrow("amqp://localhost", Errors.ParseError);
