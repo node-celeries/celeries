@@ -1,0 +1,68 @@
+{
+  "name": "celeries",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Modern Typed Celery client for Node",
+  "keywords": ["amqp", "celery", "rabbitmq", "redis", "typescript"],
+  "homepage": "https://github.com/node-celeries/celeries",
+  "bugs": {
+    "url": "https://github.com/node-celeries/celeries/issues",
+    "email": "oss@mail.cyans.me"
+  },
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Cyan Changes",
+    "email": "contact@cyans.me",
+    "url": "https://github.com/CyanChanges/"
+  },
+  "module": "dist/index.mjs",
+  "main": "dist/index.cjs",
+  "types": "dist/index.d.ts",
+  "directory": {
+    "lib": "./dist",
+    "doc": "./doc",
+    "example": "./example",
+    "test": "./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/node-celeries/celeries.git"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@types/amqplib": "^0.10.0",
+    "@types/bluebird": "^3.5.23",
+    "@types/chai": "^4.1.4",
+    "@types/events": "^3.0.3",
+    "@types/ioredis": "^3.2.14",
+    "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^10.7.0",
+    "@types/uuid": "^9.0.8",
+    "@typescript-eslint/eslint-plugin": "^8.25.0",
+    "@typescript-eslint/parser": "^8.25.0",
+    "eslint": "^9.21.0",
+    "kleur": "^4.1.5",
+    "ts-mockito": "^2.3.0",
+    "typedoc": "0.27.9",
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.0",
+    "ioredis": "^4.28.5",
+    "js-yaml": "^4.1.0",
+    "uuid": "^11.1.0"
+  },
+  "scripts": {
+    "lint": "bunx biome lint",
+    "fmt": "bunx biome format",
+    "test": "bun test test/",
+    "build": "mkdir -p dist/ && bun run bundle && bun run dts",
+    "dts": "mkdir -p dist/ && tsc --emitDeclarationOnly",
+    "bundle": "mkdir -p dist/ && bun ./scripts/build.ts",
+    "typedoc": "bunx typedoc ./src"
+  }
+}
